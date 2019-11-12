@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Employee>
+
+@{
+    ViewBag.Title = "List zaměstnanců";
+    var deleteMessage = ViewBag.DeleteMessage;
+}
+
+<h2 class="mb-3">Zaměstnanci</h2>
+
+<a asp-action="create" asp-controller="employee"
+   class="btn btn-primary mb-2" style="width:auto">Přidat zaměstnance</a>
+
+<div class="text-info mb-3">@deleteMessage</div>
+
+<div class="card-deck mb-4">
+    @if (Model.Any())
+    {
+        @foreach (var employee in Model)
+        {
+            var photoPath = "~/Images/" + (employee.PhotoPath ?? "noImage.png");
+
+    <div class="card m-3 @(employee.IsValid ? "border-success" : "border-danger text-danger")" style="min-width:18rem; max-width:30.5%;">
+        <div class="card-header bg-transparent @(employee.IsValid ? "border-success" : "border-danger")">
+            <h3>@employee.Name</h3>
+        </div>
+        <div class="card-body bg-transparent @(employee.IsValid ? "border-success" : "border-danger")">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item h6">Id zaměstnance: @employee.Id</li>
+                <li class="list-group-item h6">Email: @employee.Email</li>
+                <li class="list-group-item h6">Role: @employee.Role</li>
+                <li class="list-group-item h6">Je platný: @(employee.IsValid ? "Ano" : "Ne")</li>
+            </ul>
+        </div>
+        @*<img class="card-img-top imageThumbnail" src="@photoPath" asp-append-version="true" />*@
+
+        <div class="card-footer text-center bg-transparent bg-transparent @(employee.IsValid ? "border-success" : "border-danger")">
+            <form asp-action="DeleteEmployee" asp-route-id="@employee.Id" method="post">
+                <a asp-action="edit" asp-controller="employee" asp-route-id="@employee.Id"
+                   class="btn btn-primary m-1">Upravit</a>
+
+                <span id="confirmDeleteSpan_@employee.Id" style="display:none">
+                    <br /><span class="m-1">Opravdu chcete smazat tohoto zaměstnance?</span><br />
+                    <button type="submit" class="btn btn-success m-1">Ano</button>
+                    <span class="btn btn-danger m-1"
+                          onclick="confirmDelete('@employee.Id', false)">Ne</span>
+                </span>
+
+                <span id="deleteSpan_@employee.Id">
+                    <span class="btn btn-danger m-1"
+                          onclick="confirmDelete('@employee.Id', true)">Smazat</span>
+                </span>
+            </form>
+        </div>
+    </div>
+        }
+    }
+    else
+    {
+        <div class="text-info">Nejsou žádní zaměstnanci k zobrazení</div>
+    }
+
+
+</div>
+
+@section Scripts{
+    <script src="~/js/CustomScript.js"></script>
+}

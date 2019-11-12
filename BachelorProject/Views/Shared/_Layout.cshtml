@@ -1,0 +1,95 @@
+﻿@inject SignInManager<ApplicationUser> signInManager;
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <environment include="Development">
+        <link href="~/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
+        <script src="~/lib/jquery/jquery.js"></script>
+        <script src="~/lib/jquery-validate/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet"
+              href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              crossorigin="anonymous"
+              asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only"
+              asp-fallback-test-property="position"
+              asp-fallback-test-value="absolute"
+              asp-suppress-fallback-integrity="true">
+
+        <script src="~/lib/jquery/jquery.js"></script>
+        <script src="~/lib/jquery-validate/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.js"></script>
+    </environment>
+
+    <link rel="shortcut icon" href="https://mercurialaser.cz/wp-content/themes/mercuria/img/favicon.ico">
+    <link href="~/css/site.css" rel="stylesheet" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <div class="container">
+        @if (signInManager.IsSignedIn(User))
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <nav class="navbar bg-dark navbar-dark fixed-top">
+                        <a class="navbar-brand" asp-action="index" asp-controller="additionalGame">
+                            <img src="~/images/LogoMercuria.png" alt="logo" />
+                        </a>
+
+                        <a asp-action="index" asp-controller="additionalGame" class="nav-item nav-link navigation-item" style="font-weight: bold">Přemluvené hry</a>
+
+                        <a asp-action="index" asp-controller="voucher" class="nav-item nav-link" style="font-weight: bold">Vouchery</a>
+
+                        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#collapsibleNavbar">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                            @if (User.IsInRole("admin"))
+                            {
+                                <a asp-action="index" asp-controller="employee" class="nav-item nav-link">Zaměstnanci</a>
+                                <a asp-action="index" asp-controller="gameType" class="nav-item nav-link">Typy her</a>
+                                <a asp-action="index" asp-controller="voucherType" class="nav-item nav-link">Typy voucherů</a>
+                                <a asp-action="ListRoles" asp-controller="Administration" class="nav-item nav-link">Správa rolí</a>
+                                <a asp-action="ListUsers" asp-controller="Administration" class="nav-item nav-link">Správa uživatelů</a>
+                            }
+                            <form method="post" asp-action="logout" asp-controller="account">
+                                <button type="submit" class="nav-link btn btn-link" style="width:auto">Odhlásit @User.Identity.Name</button>
+                            </form>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="row" style="padding-top:100px">
+                <div class="col-md-12">
+                    @RenderBody()
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row" style="padding-top:30px">
+                <div class="col-md-12">
+                    @RenderBody()
+                </div>
+            </div>
+        }
+
+
+
+        @if (IsSectionDefined("Scripts"))
+        {
+            @RenderSection("Scripts", required: true)
+        }
+    </div>
+
+</body>
+</html>

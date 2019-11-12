@@ -1,0 +1,16 @@
+﻿.btn {
+    width: 85px;
+}
+
+.imageThumbnail{
+    height:200px;
+    width: auto;
+}
+
+/*body {
+    background-image: url("../images/mercuriaBackground.jpg");
+}*/
+
+.invalid-column{
+    color: indianred ;
+}

@@ -1,0 +1,116 @@
+﻿@model Voucher
+
+@{
+    ViewBag.Title = "Detail voucheru";
+    var iconPath = "~/Images/" + (Model.IsValid ? "valid64x64.png" : "inValid49x64.png");
+    var altText = Model.IsValid ? "Platný" : "Neplatný";
+}
+
+<h3 class="mb-3">Detail voucheru</h3>
+
+<div class="text-success">@ViewBag.VoucherAppliedMessage</div>
+<div class="row justify-content-center m-3">
+    <div class="col-sm-12">
+        <div class="card @(Model.IsValid ? "border-success" : "border-danger")">
+            <div class="card-header bg-transparent @(Model.IsValid ? "border-success text-success" : "border-danger text-danger")">
+                <h4 class="card-title">@Model.Title</h4>
+                <h5 class="card-text">Kód: @Model.Code</h5>
+            </div>
+
+            <div class="card-body text-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-6 text-left">
+                            <h5>Platný od:</h5>
+                        </div>
+                        <div class="col-6 text-left">
+                            <h5>@Model.ValidFrom.ToShortDateString()</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-left">
+                            <h5>Platný do:</h5>
+                        </div>
+                        <div class="col-6 text-left">
+                            <h5>@Model.ValidUntil.ToShortDateString()</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-left">
+                            <h5>Typ:</h5>
+                        </div>
+                        <div class="col-6 text-left">
+                            <h5>@Model.VoucherType.Name</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body text-center">
+                <h5 class="card-subtitle mb-2 text-left">Popis:</h5>
+                <p class="card-text text-left">@Model.Description</p>
+                <br />
+                <img alt="@altText" src="@iconPath" asp-append-version="true" />
+                <h6 class="m-2 mt-2">Vytvořeno uživatelem: @Model.ApplicationUser.UserName</h6>
+            </div>
+
+            <div class="card-footer text-center bg-transparent border-success">
+                <form asp-action="DeleteVoucher" asp-route-id="@Model.Id" method="post">
+                    <a asp-action="Index" asp-controller="Voucher"
+                       class="btn btn-info m-1">Zpět</a>
+
+                    @if (User.IsInRole("admin"))
+                    {
+                        <a asp-action="edit" asp-controller="voucher" asp-route-id="@Model.Id"
+                           class="btn btn-primary m-1">Upravit</a>
+
+                        <span id="confirmDeleteSpan_@Model.Id" style="display:none">
+                            <span class="m-1">Opravdu chcete smazat tento voucher?</span>
+                            <button type="submit" class="btn btn-success m-1">Ano</button>
+                            <span class="btn btn-danger m-1"
+                                  onclick="confirmDelete('@Model.Id', false)">Ne</span>
+                        </span>
+
+                        <span id="deleteSpan_@Model.Id">
+                            <span class="btn btn-danger m-1"
+                                  onclick="confirmDelete('@Model.Id', true)">Smazat</span>
+                        </span>
+                    }
+
+
+                </form>
+
+                @if (Model.IsValid)
+                {
+                    <div class="m-2">
+                        <form asp-action="ApplyVoucher" asp-route-id="@Model.Id" method="post">
+                            @if (User.IsInRole("admin"))
+                            {
+                                <a asp-action="ExportToPdf" asp-controller="Voucher" asp-route-id="@Model.Id"
+                                   class="btn btn-secondary m-1">Export</a>
+                            }
+
+                            <span id="confirmApplyVoucherSpan_@Model.Id" style="display:none">
+                                <span>Opravdu chcete uplatnit tento voucher?</span>
+                                <button type="submit" class="btn btn-success">Ano</button>
+                                <span class="btn btn-danger"
+                                      onclick="confirmApplyVoucher('@Model.Id', false)">Ne</span>
+                            </span>
+
+                            <span id="applyVoucherSpan_@Model.Id">
+                                <span class="btn btn-success"
+                                      onclick="confirmApplyVoucher('@Model.Id', true)">Uplatnit</span>
+                            </span>
+                        </form>
+                    </div>
+                }
+
+                <div class="text-danger">@ViewBag.ErrorMessage</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/CustomScript.js"></script>
+    <script src="~/js/confirmApplyVoucher.js"></script>
+}

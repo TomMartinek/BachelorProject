@@ -1,0 +1,103 @@
+﻿@*@model IEnumerable<Voucher>*@
+@using BachelorProject.Utility;
+@model PaginatedList<Voucher>;
+
+@{
+    ViewBag.Title = "Vouchery";
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    var deleteMessage = ViewBag.DeleteMessage;
+}
+
+<h2 class="mb-3">Vouchery</h2>
+
+@if (User.IsInRole("admin"))
+{
+    <a asp-action="create" asp-controller="voucher"
+       class="btn btn-primary mb-2" style="width:auto">Vytvořit voucher</a>
+}
+
+<form asp-action="index" asp-controller="Voucher">
+    <div class="input-group mb-2" style="width: 400px">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroup-sizing-default">Vyhledat voucher</span>
+        </div>
+        <input type="text" class="form-control" name="voucherCode"
+               aria-label="Default" placeholder="Kód" aria-describedby="inputGroup-sizing-default" value="">
+        <div class="input-group-append">
+            <button class="btn btn-outline-primary" type="submit">Vyhledat</button>
+        </div>
+    </div>
+</form>
+
+<div class="text-danger">@ViewBag.ErrorMessage</div>
+
+@if (Model.Any())
+{
+    <a asp-action="Index"
+       asp-route-pageNumber="@(Model.PageIndex - 1)"
+       class="btn btn-outline-primary @prevDisabled" style="width:100px">Předchozí</a>
+
+    <a asp-action="Index"
+       asp-route-pageNumber="@(Model.PageIndex + 1)"
+       class="btn btn-outline-primary @nextDisabled" style="width:100px">Další</a>
+
+    <div class="text-info mt-3">@deleteMessage</div>
+
+    <div class="card-deck mb-4">
+        @foreach (var voucher in Model)
+        {
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+                <div class="card m-3 @(voucher.IsValid ? "border-success" : "border-danger")">
+                    <div class="card-header bg-transparent @(voucher.IsValid ? "border-success" : "border-danger")">
+                        <h5 class="card-title">@voucher.Title</h5>
+                        <h6 class="card-text">Kód: @voucher.Code</h6>
+                    </div>
+                    <div class="card-body bg-transparent @(voucher.IsValid ? "border-success text-success" : "border-danger text-danger")">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item h6">Platný od: @voucher.ValidFrom.ToShortDateString()</li>
+                            <li class="list-group-item h6">Platný do: @voucher.ValidUntil.ToShortDateString()</li>
+                            <li class="list-group-item h6">Je platný: @(voucher.IsValid ? "Ano" : "Ne")</li>
+                            <li class="list-group-item h6">Hodnota: @voucher.Value Kč</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer text-center bg-transparent @(voucher.IsValid ? "border-success" : "border-danger")">
+                        <a asp-action="details" asp-controller="voucher" asp-route-id="@voucher.Id"
+                           class="btn btn-info m-1">Detail</a>
+
+                        @if (User.IsInRole("admin"))
+                        {
+                            <form asp-action="DeleteVoucher" asp-route-id="@voucher.Id" method="post">
+                                <a asp-action="edit" asp-controller="voucher" asp-route-id="@voucher.Id"
+                                   class="btn btn-primary m-1">Upravit</a>
+
+                                <span id="confirmDeleteSpan_@voucher.Id" style="display:none">
+                                    <br /><span class="m-1">Opravdu chcete smazat tento voucher?</span><br />
+                                    <button type="submit" class="btn btn-success m-1">Ano</button>
+                                    <span class="btn btn-danger m-1"
+                                          onclick="confirmDelete('@voucher.Id', false)">Ne</span>
+                                </span>
+
+                                <span id="deleteSpan_@voucher.Id">
+                                    <span class="btn btn-danger m-1"
+                                          onclick="confirmDelete('@voucher.Id', true)">Smazat</span>
+                                </span>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+}
+else
+{
+    <div class="text-info">
+        <p>Nejsou žádné vouchery k zobrazení.</p>
+    </div>
+}
+
+@section Scripts{
+    <script src="~/js/CustomScript.js"></script>
+}

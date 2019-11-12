@@ -1,0 +1,61 @@
+﻿@model IEnumerable<VoucherType>
+
+@{
+    ViewBag.Title = "Typy voucherů";
+    var deleteMessage = ViewBag.DeleteMessage;
+}
+
+<h2 class="mb-3">Typy voucherů</h2>
+
+<a asp-action="create" asp-controller="voucherType"
+   class="btn btn-primary mb-2" style="width:auto">Vytvořit typ voucheru</a>
+
+<div class="text-info mb-3">@deleteMessage</div>
+
+@if (Model.Any())
+{
+    <div class="table table-responsive table-hover table-striped">
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Název</th>
+                    <th class="text-center">Akce</th>
+                </tr>
+            </thead>
+            @foreach (var voucherType in Model)
+            {
+                <tr class="@(voucherType.IsValid ? "" : "table-danger")">
+                    <td class="align-middle">@voucherType.Id</td>
+                    <td class="align-middle">@voucherType.Name</td>
+                    <td class="align-middle">
+                        <form asp-action="DeleteVoucherType" asp-route-id="@voucherType.Id" method="post">
+                            <a asp-action="edit" asp-controller="voucherType" asp-route-id="@voucherType.Id"
+                               class="btn btn-primary m-1">Upravit</a>
+
+                            <span id="confirmDeleteSpan_@voucherType.Id" style="display:none">
+                                <br /><span class="m-1">Opravdu chcete smazat tento typ voucheru?</span><br />
+                                <button type="submit" class="btn btn-success m-1">Ano</button>
+                                <span class="btn btn-danger m-1"
+                                      onclick="confirmDelete('@voucherType.Id', false)">Ne</span>
+                            </span>
+
+                            <span id="deleteSpan_@voucherType.Id">
+                                <span class="btn btn-danger m-1"
+                                      onclick="confirmDelete('@voucherType.Id', true)">Smazat</span>
+                            </span>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+else
+{
+    <div class="text-info">Nejsou žádné typy voucherů k zobrazení</div>
+}
+
+@section Scripts{
+    <script src="~/js/CustomScript.js"></script>
+}

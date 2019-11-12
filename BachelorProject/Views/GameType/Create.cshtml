@@ -1,0 +1,57 @@
+﻿@model GameType
+
+@{
+    ViewBag.Title = "Vytvořit typ hry";
+}
+
+<h3 class="mb-3">Vytvořit typ hry</h3>
+
+<form enctype="multipart/form-data" asp-controller="gameType" asp-action="create" method="post" class="mt-3">
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group row">
+        <label asp-for="Name" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="Name" class="form-control" placeholder="Název" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label asp-for="Price" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="Price" class="form-control" placeholder="Cena" value="0" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="BarmaidCommision" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="BarmaidCommision" class="form-control" placeholder="Cena" value="0" />
+            <span asp-validation-for="BarmaidCommision" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label asp-for="InstruktorCommision" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="InstruktorCommision" class="form-control" placeholder="Cena" value="0" />
+            <span asp-validation-for="InstruktorCommision" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label asp-for="SoloCommision" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="SoloCommision" class="form-control" placeholder="Cena" value="0" />
+            <span asp-validation-for="SoloCommision" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-success">Uložit</button>
+            <a asp-controller="gameType" asp-action="index"
+               class="btn btn-danger">Zpět</a>
+        </div>
+    </div>
+</form>

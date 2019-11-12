@@ -1,0 +1,104 @@
+﻿@using BachelorProject.Utility;
+@model PaginatedList<AdditionalGame>;
+@*@model AdditionalGameIndexViewModel*@
+
+@{
+    ViewBag.Title = "Přemluvené hry";
+    var selectedMonth = ViewBag.Month;
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    var deleteMessage = ViewBag.DeleteMessage;
+    var branchOfficeName = ViewBag.BranchOfficeName;
+}
+
+<h2 class="mb-3">Přemluvené hry @branchOfficeName</h2>
+
+<a asp-action="create" asp-controller="additionalGame"
+   class="btn btn-primary mb-2" style="width:auto">Vytvořit přemluvenou hru</a>
+
+<form asp-controller="AdditionalGame" asp-action="Index" method="get">
+    <div class="input-group mb-2" style="width: 330px">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroup-sizing-default">Měsíc</span>
+        </div>
+        <input type="month" class="form-control" name="selectedMonth"
+               aria-label="Default" aria-describedby="inputGroup-sizing-default" value="@selectedMonth">
+        <div class="input-group-append">
+            <button class="btn btn-outline-primary" type="submit">Filtrovat</button>
+        </div>
+    </div>
+</form>
+
+@if (Model.Any())
+{
+    @if (selectedMonth != null)
+    {
+        <form asp-controller="AdditionalGame" asp-action="Summary" method="post">
+            <input type="hidden" name="selectedMonth" value="@selectedMonth" />
+            <input type="submit" value="Ukázat výsledky" class="btn btn-success mb-2" style="width:auto" />
+        </form>
+    }
+
+    <a asp-action="Index"
+       asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-selectedMonth="@selectedMonth"
+       class="btn btn-outline-primary @prevDisabled" style="width:100px">Předchozí</a>
+
+    <a asp-action="Index"
+       asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-selectedMonth="@selectedMonth"
+       class="btn btn-outline-primary @nextDisabled" style="width:100px">Další</a>
+
+    <div class="text-info mt-3">@deleteMessage</div>
+
+    <div class="table table-striped mt-3 table-responsive w-100">
+        <table>
+            <thead>
+                <tr>
+                    <th>Datum</th>
+                    <th>Barmanka</th>
+                    <th>Instruktor</th>
+                    <th>Typ hry</th>
+                    <th>Počet</th>
+                    <th class="text-center">Akce</th>
+                </tr>
+            </thead>
+            @foreach (var additionalGame in Model)
+            {
+                <tr>
+                    <td class="align-middle">@additionalGame.Date.ToShortDateString()</td>
+                    <td class="align-middle">@(additionalGame.Barmaid == null ? "Sólo" : additionalGame.Barmaid.Name)</td>
+                    <td class="align-middle">@(additionalGame.Instructor == null ? "Sólo" : additionalGame.Instructor.Name)</td>
+                    <td class="align-middle">@additionalGame.GameType.Name</td>
+                    <td class="align-middle">@additionalGame.Count</td>
+                    <td class="align-middle" style="width:auto">
+                        <form asp-action="DeleteAdditionalGame" asp-route-id="@additionalGame.Id" asp-route-selectedMonth="@selectedMonth" method="post">
+                            <a asp-action="edit" asp-controller="additionalGame" asp-route-id="@additionalGame.Id"
+                               class="btn btn-primary m-1">Upravit</a>
+
+                            <span id="confirmDeleteSpan_@additionalGame.Id" style="display:none">
+                                <br /><span class="m-1">Opravdu chcete smazat tuto přemluvenou hru?</span><br />
+                                <button type="submit" class="btn btn-success m-1">Ano</button>
+                                <span class="btn btn-danger m-1"
+                                   onclick="confirmDelete('@additionalGame.Id', false)">Ne</span>
+                            </span>
+
+                            <span id="deleteSpan_@additionalGame.Id">
+                                <span class="btn btn-danger m-1"
+                                   onclick="confirmDelete('@additionalGame.Id', true)">Smazat</span>
+                            </span>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+else
+{
+    <div class="text-info">
+        <p>Nejsou žádné přemluvené hry k zobrazení.</p>
+    </div>
+}
+
+@section Scripts{
+    <script src="~/js/CustomScript.js"></script>
+}

@@ -1,0 +1,68 @@
+﻿@model AdditionalGamesOverviewViewModel
+
+@{
+    ViewBag.Title = "Přehled přemluvených her";
+    var selectedMonth = ViewBag.SelectedMonth;
+    var branchOfficeName = ViewBag.BranchOfficeName;
+}
+
+<h4>Přehled přemluvených her za měsíc @Model.SelectedDate.ToString("yyyy-MM") z pobočky @branchOfficeName</h4>
+
+@if (User.IsInRole("admin"))
+{
+    <a class="btn btn-success mb-2 mt-1" style="width:auto"
+       href="@Url.Action("ExportToExcel", "AdditionalGame", new { selectedDate = Model.SelectedDate })">Exportovat výsledky</a>
+}
+
+<a asp-action="Index" asp-route-selectedMonth="@selectedMonth"
+   class="btn btn-danger mb-2 mt-1 ml-1">Zpět</a>
+
+<table class="table table-striped table-bordered table-hover table-responsive">
+    <tr>
+        <th rowspan="3" class="align-middle">Zaměstnanec</th>
+        <th rowspan="3" class="align-middle">Prémie celkem</th>
+        <th colspan="@(Model.GameTypes.Count()*2)" class="align-middle">Společné přemluvené hry</th>
+        <th colspan="@(Model.GameTypes.Count()*2)" class="align-middle">Sólo přemluvené hry</th>
+    </tr>
+
+    <tr>
+        @foreach (var gameType in Model.GameTypes)
+        {
+            <th colspan="2" class="align-middle">@gameType.Name</th>
+        }
+
+        @foreach (var gameType in Model.GameTypes)
+        {
+            <th colspan="2" class="align-middle">@gameType.Name</th>
+        }
+    </tr>
+    <tr>
+        @for (int i = 0; i < Model.GameTypes.Count() * 2; i++)
+        {
+            <th class="align-middle">Provize</th>
+            <th class="align-middle">Počet</th>
+        }
+    </tr>
+
+    @foreach (var employeeGame in Model.EmployeeGames)
+    {
+        <tr>
+            <td>@employeeGame.Employee.Name</td>
+
+            <td>@employeeGame.TotalCommision kč</td>
+
+
+            @foreach (var duoGame in employeeGame.SummedDuoGames)
+            {
+                <td class="align-middle">@duoGame.Commision kč</td>
+                <td class="align-middle @(duoGame.Count > 0 ? "table-success" : "")">@duoGame.Count</td>
+            }
+
+            @foreach (var soloGame in employeeGame.SummedSoloGames)
+            {
+                <td class="align-middle">@soloGame.Commision kč</td>
+                <td class="align-middle @(soloGame.Count > 0 ? "table-success" : "")">@soloGame.Count</td>
+            }
+        </tr>
+    }
+</table>

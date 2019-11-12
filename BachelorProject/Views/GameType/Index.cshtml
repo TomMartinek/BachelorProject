@@ -1,0 +1,70 @@
+﻿@model IEnumerable<GameType>
+
+@{
+    ViewBag.Title = "Typy her";
+    var deleteMessage = ViewBag.DeleteMessage;
+}
+
+<h2 class="mb-3">Typy her</h2>
+
+<a asp-action="create" asp-controller="gameType"
+   class="btn btn-primary mb-2" style="width:auto">Vytvořit typ hry</a>
+
+<div class="text-info mb-3">@deleteMessage</div>
+
+@if (Model.Any())
+{
+    <div class="table table-responsive table-hover table-striped">
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Název</th>
+                    <th>Cena</th>
+                    <th>Provize hl. barmanka</th>
+                    <th>Provize instruktor</th>
+                    <th>Provoze sólo</th>
+                    <th class="text-center">Akce</th>
+                </tr>
+            </thead>
+            @foreach (var gameType in Model)
+            {
+                <tr class="@(gameType.IsValid ? "" : "table-danger")">
+                    <td class="align-middle">@gameType.Id</td>
+                    <td class="align-middle">@gameType.Name</td>
+                    <td class="align-middle text-center">@gameType.Price kč</td>
+                    <td class="align-middle text-center">@gameType.BarmaidCommision kč</td>
+                    <td class="align-middle text-center">@gameType.InstruktorCommision kč</td>
+                    <td class="align-middle text-center">@gameType.SoloCommision kč</td>
+                    <td class="align-middle">
+                        <form asp-action="DeleteGameType" asp-route-id="@gameType.Id" method="post">
+                            <a asp-action="edit" asp-controller="gameType" asp-route-id="@gameType.Id"
+                               class="btn btn-primary m-1">Upravit</a>
+
+                            <span id="confirmDeleteSpan_@gameType.Id" style="display:none">
+                                <br /><span class="m-1">Opravdu chcete smazat tento typ hry?</span><br />
+                                <button type="submit" class="btn btn-success m-1">Ano</button>
+                                <span class="btn btn-danger m-1"
+                                      onclick="confirmDelete('@gameType.Id', false)">Ne</span>
+                            </span>
+
+                            <span id="deleteSpan_@gameType.Id">
+                                <span class="btn btn-danger m-1"
+                                      onclick="confirmDelete('@gameType.Id', true)">Smazat</span>
+                            </span>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+else
+{
+    <div class="text-info">Nejsou žádné typy her k zobrazení</div>
+}
+
+
+@section Scripts{
+    <script src="~/js/CustomScript.js"></script>
+}

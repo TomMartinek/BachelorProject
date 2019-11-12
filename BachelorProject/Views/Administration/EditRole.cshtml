@@ -1,0 +1,57 @@
+﻿@model EditRoleViewModel
+
+@{ 
+    ViewBag.Title = "Upravot roli";
+}
+
+<h1>Upravit roli</h1>
+
+<form method="post" class="mt-3" asp-action="EditRole" asp-controller="administration">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group row">
+        <label asp-for="Id" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="Id" disabled class="form-control" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label asp-for="RoleName" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="RoleName" class="form-control" />
+            <span asp-validation-for="RoleName" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-success">Uložit</button>
+            <a asp-action="ListRoles" asp-controller="administration"
+               class="btn btn-danger">Zpět</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Uživatelé v této roli</h3>
+        </div>
+        <div class="card-body">
+            @if (Model.Users.Any())
+            {
+                foreach (var user in Model.Users)
+                {
+                    <h5 class="card-title">@user</h5>
+                }
+            }
+            else
+            {
+                <h5 class="card-title">Této roli zatím nebyli přidáni žádní uživatelé</h5>
+            }
+        </div>
+        <div class="card-footer">
+            <a asp-action="EditUsersInRole" asp-controller="Administration" asp-route-roleId="@Model.Id"
+               class="btn btn-primary" style="width:auto">Přidat nebo odebrat uživatele</a>
+        </div>
+    </div>
+
+</form>

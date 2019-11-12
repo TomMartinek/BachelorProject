@@ -1,0 +1,72 @@
+﻿@model AdditionalGameViewModel
+
+@{
+    ViewBag.Title = "Vytvořit typ hry";
+}
+
+<h3 class="mb-3">Vytvořit přemluvenou hru</h3>
+
+<form enctype="multipart/form-data" asp-controller="additionalGame" asp-action="create" method="post" class="mt-3">
+
+    <input hidden asp-for="ApplicationUserName" value="@User.Identity.Name" />
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group row">
+        <label asp-for="Date" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="Date" class="form-control" />
+            <span asp-validation-for="Date" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="BarmaidId" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <select asp-for="BarmaidId" class="custom-select mr-sm-2"
+                    asp-items="Model.Barmaids">
+                <option value="">Vyberte hlavní barmanku</option>
+            </select>
+            <span asp-validation-for="BarmaidId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="InstructorId" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <select asp-for="InstructorId" class="custom-select mr-sm-2"
+                    asp-items="Model.Employees">
+                <option value="">Vyberte instruktora</option>
+            </select>
+            <span asp-validation-for="InstructorId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="GameTypeId" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <select asp-for="GameTypeId" class="custom-select mr-sm-2"
+                    asp-items="Model.GameTypes">
+                <option value="">Vyberte typ hry</option>
+            </select>
+            <span asp-validation-for="GameTypeId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="Count" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="Count" class="form-control" placeholder="Počet" />
+            <span asp-validation-for="Count" class="text-danger"></span>
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-success">Vytvořit</button>
+            <a asp-controller="additionalGame" asp-action="index"
+               class="btn btn-danger">Zpět</a>
+        </div>
+    </div>
+</form>

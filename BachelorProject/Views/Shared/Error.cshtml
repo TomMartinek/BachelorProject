@@ -1,0 +1,15 @@
+﻿@if (ViewBag.ErrorTitle == null)
+{
+    <h1>
+        Omlouváme se, něco se pokazilo...
+    </h1>
+    <h3>Dejte mi prosím vědět o chybě na email: tomasmart7@gmail.com</h3>
+    <hr />
+}
+else
+{
+    <h1 class="text-danger">@ViewBag.ErrorTitle</h1>
+    <h6 class="text-danger">@ViewBag.ErrorMessage</h6>
+}
+
+

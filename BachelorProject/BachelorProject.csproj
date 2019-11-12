@@ -1,0 +1,73 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20190919141455_SeedEmployeesTable.cs" />
+    <Compile Remove="Migrations\20190919141455_SeedEmployeesTable.Designer.cs" />
+    <Compile Remove="Migrations\20190919141720_AlterEmployeesSeedData.cs" />
+    <Compile Remove="Migrations\20190919141720_AlterEmployeesSeedData.Designer.cs" />
+    <Compile Remove="Migrations\20190919143341_addPhotoPathColumn.cs" />
+    <Compile Remove="Migrations\20190919143341_addPhotoPathColumn.Designer.cs" />
+    <Compile Remove="Migrations\20190919143604_addSomeProperty.cs" />
+    <Compile Remove="Migrations\20190919143604_addSomeProperty.Designer.cs" />
+    <Compile Remove="Migrations\20190919143954_AddPhotoPatColumn.cs" />
+    <Compile Remove="Migrations\20190919143954_AddPhotoPatColumn.Designer.cs" />
+    <Compile Remove="Migrations\20190919144121_AddSomePropertyColumn.cs" />
+    <Compile Remove="Migrations\20190919144121_AddSomePropertyColumn.Designer.cs" />
+    <Compile Remove="Migrations\20190919144547_AddPhotoPathColumn.cs" />
+    <Compile Remove="Migrations\20190919144547_AddPhotoPathColumn.Designer.cs" />
+    <Compile Remove="Migrations\20190923153138_employeeRoles.cs" />
+    <Compile Remove="Migrations\20190923153138_employeeRoles.Designer.cs" />
+    <Compile Remove="Migrations\20190926122626_addEmployeeRolesTable.cs" />
+    <Compile Remove="Migrations\20190926122626_addEmployeeRolesTable.Designer.cs" />
+    <Compile Remove="Migrations\20190926155806_deleteDepartmentColumn.cs" />
+    <Compile Remove="Migrations\20190926155806_deleteDepartmentColumn.Designer.cs" />
+    <Compile Remove="Migrations\20190926165736_addGameTypesAndAdditionalGames.cs" />
+    <Compile Remove="Migrations\20190926165736_addGameTypesAndAdditionalGames.Designer.cs" />
+    <Compile Remove="Migrations\20190926172410_addGameTypesAndAdditionalGames.cs" />
+    <Compile Remove="Migrations\20190926172410_addGameTypesAndAdditionalGames.Designer.cs" />
+    <Compile Remove="Migrations\20190926183644_addAdditionalGamesAndGameTypes.cs" />
+    <Compile Remove="Migrations\20190926183644_addAdditionalGamesAndGameTypes.Designer.cs" />
+    <Compile Remove="Migrations\20190929091552_addGameTypesAndAdditionalGames.cs" />
+    <Compile Remove="Migrations\20190929091552_addGameTypesAndAdditionalGames.Designer.cs" />
+    <Compile Remove="Migrations\20190929092315_addGameTypesAndAdditionalGames.cs" />
+    <Compile Remove="Migrations\20190929092315_addGameTypesAndAdditionalGames.Designer.cs" />
+    <Compile Remove="Migrations\20190929092738_addGameTypesAndAdditionalGames.cs" />
+    <Compile Remove="Migrations\20190929092738_addGameTypesAndAdditionalGames.Designer.cs" />
+    <Compile Remove="Migrations\20190929093820_addGameTypesAndAdditionalGames.cs" />
+    <Compile Remove="Migrations\20190929093820_addGameTypesAndAdditionalGames.Designer.cs" />
+    <Compile Remove="Migrations\20191003075104_addVoucherAndVoucherType.cs" />
+    <Compile Remove="Migrations\20191003075104_addVoucherAndVoucherType.Designer.cs" />
+    <Compile Remove="Migrations\20191003163806_voucherChangeCodeColumn.cs" />
+    <Compile Remove="Migrations\20191003163806_voucherChangeCodeColumn.Designer.cs" />
+    <Compile Remove="Migrations\20191007133533_AddingIdentity.cs" />
+    <Compile Remove="Migrations\20191007133533_AddingIdentity.Designer.cs" />
+    <Compile Remove="Migrations\20191029165117_addEmployeeRoleAsEnum.cs" />
+    <Compile Remove="Migrations\20191029165117_addEmployeeRoleAsEnum.Designer.cs" />
+    <Compile Remove="Migrations\20191029170000_employeeRoleEnumFix.cs" />
+    <Compile Remove="Migrations\20191029170000_employeeRoleEnumFix.Designer.cs" />
+    <Compile Remove="Migrations\20191029182732_gameTypeAddCommisions.cs" />
+    <Compile Remove="Migrations\20191029182732_gameTypeAddCommisions.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.95.0-beta2" />
+    <PackageReference Include="DinkToPdf" Version="1.0.8" />
+    <PackageReference Include="Libs.Sheets.OfficeOpenXml" Version="1.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

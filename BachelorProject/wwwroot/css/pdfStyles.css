@@ -1,0 +1,37 @@
+﻿
+table {
+    width: 80%;
+    border-collapse: collapse;
+    padding-top: 30px;
+    position: absolute;
+    bottom: 40px;
+    left: 60px;
+}
+
+td, th {
+    padding: 15px;
+    font-size: 22px;
+    text-align: left;
+    color: aliceblue;
+}
+
+table th {
+    color: white;
+}
+body {
+    background-image: url('../images/voucherbackground.jpg');
+    background-color: #cccccc;
+}
+
+h2 {
+    text-align: center;
+    padding-top: 280px;
+    color: white;
+}
+
+h1 {
+    position: absolute;
+    left: 550px;
+    top: 150px;
+    color: white;
+}

@@ -1,0 +1,51 @@
+﻿@model EmployeeDetailsViewModel
+
+@{
+    ViewBag.Title = "Detail zaměstnance";
+    var photoPath = "~/Images/" + (Model.Employee.PhotoPath ?? "noImage.png");
+}
+
+<h2 class="mb-3">Detail zaměstnance</h2>
+
+<div class="row justify-content-center m-3">
+    <div class="col-sm-8">
+        <div class="card">
+            <div class="card-header">
+                <h1>@Model.Employee.Name</h1>
+            </div>
+
+            <div class="card-body text-center">
+                @*<img class="card-img-top" src="@photoPath" asp-append-version="true"/>*@
+
+                <h4>Employee ID: @Model.Employee.Id</h4>
+                <h4>Email: @Model.Employee.Email</h4>
+                <h4>Role: @Model.Employee.Role</h4>
+            </div>
+            <div class="card-footer text-center">
+                <form asp-action="DeleteEmployee" asp-route-id="@Model.Employee.Id" method="post">
+                    <a asp-controller="employee" asp-action="index"
+                       class="btn btn-info">Zpět</a>
+                    <a asp-action="edit" asp-controller="employee" asp-route-id="@Model.Employee.Id"
+                       class="btn btn-primary">Upravit</a>
+
+                    <span id="confirmDeleteSpan_@Model.Employee.Id" style="display:none">
+                        <br /><span class="m-1">Opravdu chcete smazat tohoto zaměstnance?</span><br />
+                        <button type="submit" class="btn btn-success m-1">Ano</button>
+                        <span class="btn btn-danger m-1"
+                              onclick="confirmDelete('@Model.Employee.Id', false)">Ne</span>
+                    </span>
+
+                    <span id="deleteSpan_@Model.Employee.Id">
+                        <span class="btn btn-danger m-1"
+                              onclick="confirmDelete('@Model.Employee.Id', true)">Smazat</span>
+                    </span>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/js/CustomScript.js"></script>
+}
