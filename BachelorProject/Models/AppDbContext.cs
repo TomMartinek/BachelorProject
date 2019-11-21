@@ -21,7 +21,7 @@ namespace BachelorProject.Models
 
         public DbSet<AdditionalGame> AdditionalGames { get; set; }
 
-        public DbSet<VoucherType> VoucherTypes { get; set; }
+        //public DbSet<VoucherType> VoucherTypes { get; set; }
 
         public DbSet<Voucher> Vouchers { get; set; }
 

@@ -43,11 +43,11 @@ namespace BachelorProject.Models
 
         public bool IsValid { get; set; }
 
-        [Required(ErrorMessage = "Vyberte typ voucheru")]
-        [Display(Name = "Typ voucheru")]
-        public int VoucherTypeId { get; set; }
-        [ForeignKey("VoucherTypeId")]
-        public VoucherType VoucherType { get; set; }
+        //[Required(ErrorMessage = "Vyberte typ voucheru")]
+        //[Display(Name = "Typ voucheru")]
+        //public int VoucherTypeId { get; set; }
+        //[ForeignKey("VoucherTypeId")]
+        //public VoucherType VoucherType { get; set; }
 
         [ForeignKey("ApplicationUserId")]
         public string ApplicationUserId { get; set; }

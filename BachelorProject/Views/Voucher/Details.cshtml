@@ -12,7 +12,7 @@
 <div class="row justify-content-center m-3">
     <div class="col-sm-12">
         <div class="card @(Model.IsValid ? "border-success" : "border-danger")">
-            <div class="card-header bg-transparent @(Model.IsValid ? "border-success text-success" : "border-danger text-danger")">
+            <div class="card-header bg-transparent @(Model.IsValid ? "text-success" : "text-danger")">
                 <h4 class="card-title">@Model.Title</h4>
                 <h5 class="card-text">Kód: @Model.Code</h5>
             </div>
@@ -35,17 +35,17 @@
                             <h5>@Model.ValidUntil.ToShortDateString()</h5>
                         </div>
                     </div>
-                    <div class="row">
+                    @*<div class="row">
                         <div class="col-6 text-left">
                             <h5>Typ:</h5>
                         </div>
                         <div class="col-6 text-left">
                             <h5>@Model.VoucherType.Name</h5>
                         </div>
-                    </div>
+                    </div>*@
                 </div>
             </div>
-            <div class="card-body text-center">
+            <div class="card-body text-center bg-transparent">
                 <h5 class="card-subtitle mb-2 text-left">Popis:</h5>
                 <p class="card-text text-left">@Model.Description</p>
                 <br />
@@ -53,7 +53,7 @@
                 <h6 class="m-2 mt-2">Vytvořeno uživatelem: @Model.ApplicationUser.UserName</h6>
             </div>
 
-            <div class="card-footer text-center bg-transparent border-success">
+            <div class="card-footer text-center bg-transparent @(Model.IsValid ? "border-success" : "border-danger")">
                 <form asp-action="DeleteVoucher" asp-route-id="@Model.Id" method="post">
                     <a asp-action="Index" asp-controller="Voucher"
                        class="btn btn-info m-1">Zpět</a>

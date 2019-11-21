@@ -8,7 +8,7 @@ namespace BachelorProject.Models
     public interface IVoucherRepository
     {
         Voucher GetVoucher(int id);
-        IEnumerable<VoucherType> GetAllVoucherTypes();
+        //IEnumerable<VoucherType> GetAllVoucherTypes();
         IEnumerable<Voucher> GetAllVouchers();
         IQueryable<Voucher> GetAllVouchersAsIQueriable();
 

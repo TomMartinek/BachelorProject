@@ -52,7 +52,7 @@ namespace BachelorProject
             services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
             services.AddScoped<IGameTypeRepository, SQLGameTypeRepository>();
             services.AddScoped<IAdditionalGameRepository, SQLAdditionalGameRepository>();
-            services.AddScoped<IVoucherTypeRepository, SQLVoucherTypeRepository>();
+            //services.AddScoped<IVoucherTypeRepository, SQLVoucherTypeRepository>();
             services.AddScoped<IVoucherRepository, SQLVoucherRepository>();
 
             //Pdf generator

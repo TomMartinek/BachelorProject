@@ -8,7 +8,7 @@
 <h2 class="mb-3">Zaměstnanci</h2>
 
 <a asp-action="create" asp-controller="employee"
-   class="btn btn-primary mb-2" style="width:auto">Přidat zaměstnance</a>
+   class="btn btn-primary mb-2" style="width:auto">Vytvořit zaměstnance</a>
 
 <div class="text-info mb-3">@deleteMessage</div>
 
@@ -17,7 +17,7 @@
     {
         @foreach (var employee in Model)
         {
-            var photoPath = "~/Images/" + (employee.PhotoPath ?? "noImage.png");
+            //var photoPath = "~/Images/" + (employee.PhotoPath ?? "noImage.png");
 
     <div class="card m-3 @(employee.IsValid ? "border-success" : "border-danger text-danger")" style="min-width:18rem; max-width:30.5%;">
         <div class="card-header bg-transparent @(employee.IsValid ? "border-success" : "border-danger")">

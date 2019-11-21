@@ -36,11 +36,11 @@ namespace BachelorProject.ViewModels.VoucherViewModels
         [Display(Name = "Hodnota")]
         public int Value { get; set; }
 
-        [Required(ErrorMessage = "Vyberte typ voucheru")]
-        [Display(Name = "Typ voucheru")]
-        public int? VoucherTypeId { get; set; }
+        //[Required(ErrorMessage = "Vyberte typ voucheru")]
+        //[Display(Name = "Typ voucheru")]
+        //public int? VoucherTypeId { get; set; }
 
-        public List<SelectListItem> VoucherTypes { get; set; }
+        //public List<SelectListItem> VoucherTypes { get; set; }
 
         public string ApplicationUserName { get; set; }
 

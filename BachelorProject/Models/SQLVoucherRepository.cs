@@ -40,24 +40,22 @@ namespace BachelorProject.Models
 
         public IEnumerable<Voucher> GetAllVouchers()
         {
-            return context.Vouchers.Include(vt => vt.VoucherType);
+            return context.Vouchers;
         }
 
         public IQueryable<Voucher> GetAllVouchersAsIQueriable()
         {
-            return context.Vouchers.Include(vt => vt.VoucherType)
-                                   .OrderByDescending(v => v.CreationDate);
+            return context.Vouchers.OrderByDescending(v => v.CreationDate);
         }
 
-        public IEnumerable<VoucherType> GetAllVoucherTypes()
-        {
-            return context.VoucherTypes;
-        }
+        //public IEnumerable<VoucherType> GetAllVoucherTypes()
+        //{
+        //    return context.VoucherTypes;
+        //}
 
         public Voucher GetVoucher(int id)
         {
-            return context.Vouchers.Include(vt => vt.VoucherType)
-                                   .Include(u => u.ApplicationUser)
+            return context.Vouchers.Include(u => u.ApplicationUser)
                                    .AsEnumerable()
                                    .FirstOrDefault(v => v.Id == id);
         }

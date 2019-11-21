@@ -49,7 +49,7 @@ namespace BachelorProject.Controllers
             {
                 Id = user.Id,
                 Email = user.Email,
-                UserName = user.UserName,
+                //UserName = user.UserName,
                 BranchOffice = user.BranchOffice,
                 Roles = userRoles,
             };
@@ -107,7 +107,7 @@ namespace BachelorProject.Controllers
             else
             {
                 user.Email = model.Email;
-                user.UserName = model.UserName;
+                //user.UserName = model.UserName;
                 user.BranchOffice = model.BranchOffice;
 
                 var result = await userManager.UpdateAsync(user);

@@ -21,7 +21,7 @@ namespace BachelorProject.Models
             ErrorMessage = "Neplatný formát emailu")]
         public string Email { get; set; }
 
-        public string PhotoPath { get; set; }
+        //public string PhotoPath { get; set; }
 
         public bool IsValid { get; set; }
 

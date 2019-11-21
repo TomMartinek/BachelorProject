@@ -16,9 +16,9 @@ namespace BachelorProject.ViewModels.User
 
         public string Id { get; set; }
 
-        [Required(ErrorMessage = "Uživatelské jméno")]
-        [Display(Name = "Uživatelské jméno")]
-        public string UserName { get; set; }
+        //[Required(ErrorMessage = "Uživatelské jméno")]
+        //[Display(Name = "Uživatelské jméno")]
+        //public string UserName { get; set; }
 
         [Required(ErrorMessage = "Zadejte email")]
         [EmailAddress(ErrorMessage = "Neplatný formát emailu")]

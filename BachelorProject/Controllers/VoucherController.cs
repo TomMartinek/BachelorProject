@@ -150,7 +150,7 @@ namespace BachelorProject.Controllers
 
             model.ValidFrom = DateTime.Now;
             model.ValidUntil = DateTime.Now;
-            model.VoucherTypes = GetVoucherTypesToList(true);
+            //model.VoucherTypes = GetVoucherTypesToList(true);
 
             return View(model);
         }
@@ -166,6 +166,10 @@ namespace BachelorProject.Controllers
                 ModelState.AddModelError("ApplicationUserName", "Chyba při zjískávání Id uživatele");
             }
 
+            if (DateTime.Compare(model.ValidUntil, DateTime.Now) < 0)
+            {
+                ModelState.AddModelError("ValidUntil", "Datum konce platnosti musí být později než současné datum.");
+            }
             if (model.ValidFrom > model.ValidUntil)
             {
                 ModelState.AddModelError("ValidFrom", "Datum začátku platnosti musí být dříve než datum konce platnosti");
@@ -181,7 +185,7 @@ namespace BachelorProject.Controllers
                     Title = model.Title,
                     Description = model.Description,
                     Value = model.Value,
-                    VoucherTypeId = model.VoucherTypeId.Value,
+                    //VoucherTypeId = model.VoucherTypeId.Value,
 
                     Code = (DateTime.Now.Ticks - new DateTime(2016, 1, 1).Ticks).ToString("x"),
                     CreationDate = DateTime.Now,
@@ -193,7 +197,7 @@ namespace BachelorProject.Controllers
                 return RedirectToAction("details", new { id = newVoucher.Id });
             }
 
-            model.VoucherTypes = GetVoucherTypesToList(true);
+            //model.VoucherTypes = GetVoucherTypesToList(true);
             return View(model);
         }
 
@@ -211,8 +215,8 @@ namespace BachelorProject.Controllers
                 Title = voucher.Title,
                 Description = voucher.Description,
                 Value = voucher.Value,
-                VoucherTypeId = voucher.VoucherTypeId,
-                VoucherTypes = GetVoucherTypesToList(false),
+                //VoucherTypeId = voucher.VoucherTypeId,
+                //VoucherTypes = GetVoucherTypesToList(false),
             };
             return View(voucherViewModel);
         }
@@ -221,6 +225,16 @@ namespace BachelorProject.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Edit(VoucherViewModel model)
         {
+            if (DateTime.Compare(model.ValidUntil, DateTime.Now) < 0)
+            {
+                ModelState.AddModelError("ValidUntil", "Datum konce platnosti musí být později než současné datum.");
+            }
+            if (model.ValidFrom > model.ValidUntil)
+            {
+                ModelState.AddModelError("ValidFrom", "Datum začátku platnosti musí být dříve než datum konce platnosti");
+                ModelState.AddModelError("ValidUntil", "Datum konce platnosti musí být později než datum začátku platnosti");
+            }
+
             if (ModelState.IsValid)
             {
                 Voucher voucher = voucherRepository.GetVoucher(model.Id);
@@ -230,13 +244,13 @@ namespace BachelorProject.Controllers
                 voucher.Title = model.Title;
                 voucher.Description = model.Description;
                 voucher.Value = model.Value;
-                voucher.VoucherTypeId = model.VoucherTypeId.Value;
+                //voucher.VoucherTypeId = model.VoucherTypeId.Value;
 
                 voucherRepository.Update(voucher);
                 return RedirectToAction("index");
             }
 
-            model.VoucherTypes = GetVoucherTypesToList(false);
+            //model.VoucherTypes = GetVoucherTypesToList(false);
             return View(model);
         }
 
@@ -272,28 +286,28 @@ namespace BachelorProject.Controllers
             return File(file, "application/pdf", $"voucher-{voucher.Code}.pdf");
         }
 
-        private List<SelectListItem> GetVoucherTypesToList(bool onlyValid)
-        {
-            if (onlyValid)
-            {
-                return voucherRepository.GetAllVoucherTypes().Where(vt => vt.IsValid == true)
-                        .Select(a => new SelectListItem()
-                        {
-                            Value = a.Id.ToString(),
-                            Text = a.Name,
-                        }).ToList();
-            }
-            else
-            {
-                return voucherRepository.GetAllVoucherTypes()
-                        .Select(a => new SelectListItem()
-                        {
-                            Value = a.Id.ToString(),
-                            Text = a.Name,
-                        }).ToList();
-            }
+        //private List<SelectListItem> GetVoucherTypesToList(bool onlyValid)
+        //{
+        //    if (onlyValid)
+        //    {
+        //        return voucherRepository.GetAllVoucherTypes().Where(vt => vt.IsValid == true)
+        //                .Select(a => new SelectListItem()
+        //                {
+        //                    Value = a.Id.ToString(),
+        //                    Text = a.Name,
+        //                }).ToList();
+        //    }
+        //    else
+        //    {
+        //        return voucherRepository.GetAllVoucherTypes()
+        //                .Select(a => new SelectListItem()
+        //                {
+        //                    Value = a.Id.ToString(),
+        //                    Text = a.Name,
+        //                }).ToList();
+        //    }
 
-        }
+        //}
 
     }
 }
