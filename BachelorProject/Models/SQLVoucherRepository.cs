@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BachelorProject.Models
 {
+    // implementace rozhraní "IVoucherRepository"
     public class SQLVoucherRepository : IVoucherRepository
     {
         private readonly AppDbContext context;

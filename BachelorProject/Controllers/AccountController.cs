@@ -10,11 +10,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BachelorProject.Controllers
 {
+    /** 
+        Tento konroler obsahuje logiku spojenou s přihlašováním a registrováním uživatelů.
+        Nepřihlášeným uživatelům jsou přístupny pouze metody s atributem "[AllowAnonymous]".
+        Metody s atributem "[Authorize(Roles = "admin")]" jsou přístupné pouze administrátorovi.
+        Zbylé metody jsou přístupné přihlášeným uživatelům.
+    */
+
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
 
+        // konstruktor této třídy
         public AccountController(UserManager<ApplicationUser> userManager,
                                  SignInManager<ApplicationUser> signInManager)
         {
@@ -22,6 +30,8 @@ namespace BachelorProject.Controllers
             this.signInManager = signInManager;
         }
 
+
+        // metoda pro odhlášení uživatele z aplikace
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
@@ -29,7 +39,7 @@ namespace BachelorProject.Controllers
             return RedirectToAction("index", "employee");
         }
 
-
+        // metoda pro zobrazení registračního formuláře, kterou může provést pouze admin
         [HttpGet]
         [Authorize(Roles = "admin")]
         public IActionResult Register()
@@ -37,19 +47,24 @@ namespace BachelorProject.Controllers
             return View();
         }
 
+        // metoda pro vytvoření uživatele po potvrzení registračního formuláře
         [HttpPost]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
+            // kontrola platnosti předaného modelu
             if (ModelState.IsValid)
             {
+                //vytvoření proměnné user s příslušnými daty
                 var user = new ApplicationUser {
                     UserName = model.Email,
                     Email = model.Email,
                     BranchOffice = model.BranchOffice
                 };
+                //uložení uživatele
                 var result = await userManager.CreateAsync(user, model.Password);
 
+                //kontrola výsledku akce a případné přesměrování uživatele na seznam uživatelů, nebo zobrazení chybové hlášky
                 if (result.Succeeded)
                 {
                     if(signInManager.IsSignedIn(User) && User.IsInRole("admin"))
@@ -61,6 +76,7 @@ namespace BachelorProject.Controllers
                     return RedirectToAction("index", "employee");
                 }
 
+                //zobrazení chybových hlášek
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
@@ -70,11 +86,14 @@ namespace BachelorProject.Controllers
             return View(model);
         }
 
+        // kontrola zadávaného emailu při registraci nového uživatele - není možné vytvořit uživatele se stejným emailem
         [AcceptVerbs("Get", "Post")]
         public async Task<IActionResult> IsEmailInUse(string email)
         {
+            //vyhledání uživatele podle emailu v databázi
             var user = await userManager.FindByEmailAsync(email);
 
+            // pokud byl nalezen uživatel s tímto emailem, je vrácena chybová hláška
             if (user == null)
             {
                 return Json(true);
@@ -85,6 +104,7 @@ namespace BachelorProject.Controllers
             }
         }
 
+        // metotoda pro zobrazení přihlašovacího formuláře do aplikace
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login()
@@ -92,14 +112,18 @@ namespace BachelorProject.Controllers
             return View();
         }
 
+        // metoda pro přihlášení uživatele po potvrzení přihlašovacího formuláře
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
+            // kontrola platnosti předaného modelu
             if (ModelState.IsValid)
             {
+                //přihlášení uživatele
                 var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
 
+                // ověření výsledku a případné přihlášení, nebo zobrazení chybové hlášky
                 if (result.Succeeded)
                 {
                     return RedirectToAction("index", "additionalGame");
@@ -111,6 +135,7 @@ namespace BachelorProject.Controllers
             return View(model);
         }
 
+        // zobrazení chybové hlášky v případě, že by chtěl uživatel provést akci ke které nemá oprávnění
         [HttpGet]
         [AllowAnonymous]
         public IActionResult AccessDenied()

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Models
 {
+    // implementace rozhraní IGameTypeRepository
     public class SQLGameTypeRepository : IGameTypeRepository
     {
         private readonly AppDbContext context;

@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Models
 {
+
+    /** 
+     * Databázová entita "Přemluvené hry"
+     * Každý atribut má jistá omezení, která jsou využívána při validaci jenak na straně prohlížeče, tak i na straně serveru
+     * **/
     public class AdditionalGame
     {
         public int Id { get; set; }

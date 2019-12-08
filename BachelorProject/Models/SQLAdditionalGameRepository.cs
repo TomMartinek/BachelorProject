@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Models
 {
+    // implementace rozhraní IAdditionalGame repository
     public class SQLAdditionalGameRepository : IAdditionalGameRepository
     {
         private readonly AppDbContext context;

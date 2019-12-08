@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Models
 {
+    // rozhraní pro práci s entitou "Vouchery"
     public interface IVoucherRepository
     {
         Voucher GetVoucher(int id);

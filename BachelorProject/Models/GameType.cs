@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Models
 {
+    /** 
+     * Databázová entita "Typy her"
+     * Každý atribut má jistá omezení, která jsou využívána při validaci jenak na straně prohlížeče, tak i na straně serveru
+     * **/
     public class GameType
     {
         public int Id { get; set; }

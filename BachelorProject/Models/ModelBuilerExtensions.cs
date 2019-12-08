@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Models
 {
+    // třída pro rozšiřování třídy "ModelBuilder"
     public static class ModelBuilerExtensions
     {
+        // metoda pro naplnění databáze testovacími daty, tato metoda však není využívána
         public static void Seed(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Employee>().HasData(

@@ -19,12 +19,20 @@ using BachelorProject.Models.Enums;
 
 namespace BachelorProject.Controllers
 {
+    /** 
+        Tento konroler obsahuje logiku spojenou se systémem přemluvených her.
+        Nepřihlášeným uživatelům jsou přístupny pouze metody s atributem "[AllowAnonymous]".
+        Metody s atributem "[Authorize(Roles = "admin")]" jsou přístupné pouze administrátorovi.
+        Zbylé metody jsou přístupné všem přihlášeným uživatelům.
+    */
+
     public class AdditionalGameController : Controller
     {
         private readonly IAdditionalGameRepository additionalGameRepostioty;
         private readonly IEmployeeRepository employeeRepository;
         private readonly UserManager<ApplicationUser> userManager;
-
+        
+        // konstruktor této třídy
         public AdditionalGameController(IAdditionalGameRepository additionalGameRepostioty,
                                         IEmployeeRepository employeeRepository,
                                         UserManager<ApplicationUser> userManager)
@@ -34,35 +42,43 @@ namespace BachelorProject.Controllers
             this.userManager = userManager;
         }
 
+        // metoda pro zobrazení přemluvených her dané pobočky, může se jednat o všechny, nebo ty z konkrétního měsíce
         public async Task<ViewResult> Index(string selectedMonth, int? pageNumber, string deleteMessage)
         {
+            // zjištění, který uživatel je přihlášen pro filtrování přemluvených her podle pobočky
             var user = await userManager.FindByNameAsync(User.Identity.Name);
             IQueryable<AdditionalGame> additionalGames = null;
 
+            // zjištění, zadli mají být zobrazeny přemluvené hry pouze pro daný měsíc
             if (!string.IsNullOrEmpty(selectedMonth))
             {
+                // zjískání přemluvených her dané pobočky pro daný měsíc z databáze
                 additionalGames = additionalGameRepostioty
                     .GetMonthAdditionalGamesAsIQueryable(DateTime.Parse(selectedMonth), user.BranchOffice.Value);
             }
             else
             {
+                // zjískání všech přemluvených her dané pobočky z databáze
                 additionalGames = additionalGameRepostioty.GetAllAdditionalGamesAsIQueryable(user.BranchOffice.Value);
             }
 
+            // předání dodatečných údajů pohledu
             ViewBag.DeleteMessage = deleteMessage;
             ViewBag.Month = selectedMonth;
             ViewBag.BranchOfficeName = user.BranchOffice.Value == BranchOfficeEnum.Branik ? "Braník" : "Holešovice";
 
-
+            // počet záznamů na jedné straně
             int pageSize = 5;
             return View(await PaginatedList<AdditionalGame>.CreateAsync(additionalGames.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
+        // metoda pro smazání přemluvené hry
         [HttpPost]
         public IActionResult DeleteAdditionalGame(int id, string selectedMonth)
         {
             string deleteMessage = null;
 
+            // pokus o smazání záznamu a případné zobrazení chybové hlášky
             try
             {
                 AdditionalGame additionalGame = additionalGameRepostioty.Delete(id);
@@ -76,32 +92,14 @@ namespace BachelorProject.Controllers
             }
         }
 
-        // Old index method
-        //public ViewResult Index(string selectedMonth)
-        //{
-        //    AdditionalGameIndexViewModel model = new AdditionalGameIndexViewModel();
-
-        //    if (!string.IsNullOrEmpty(selectedMonth))
-        //    {
-        //        model.AdditionalGames = additionalGameRepostioty.GetMonthAdditionalGames(DateTime.Parse(selectedMonth));
-        //        model.SelectedMonth = selectedMonth;
-        //    }
-        //    else
-        //    {
-        //        model.AdditionalGames = additionalGameRepostioty.GetAllAdditionalGames();
-        //    }
-
-        //    ViewBag.Month = selectedMonth;
-
-        //    return View("~/Views/AdditionalGame/index.cshtml", model);
-        //}
-
+        // metoda pro zobrazení formuláře k vytvoření přemluvené hry 
         [HttpGet]
         public ViewResult Create()
         {
             AdditionalGameViewModel model = new AdditionalGameViewModel();
 
             model.Date = DateTime.Now;
+            // naplnění výběrových oken
             model.Barmaids = GetBarmaidsToSelectList(true);
             model.Employees = GetEmployeesToSelectList(true);
             model.GameTypes = GetGameTypesToSelectList(true);
@@ -109,29 +107,30 @@ namespace BachelorProject.Controllers
             return View(model);
         }
 
+        // metoda pro vytvoření přemluvené hry po potvrzení formuláře
         [HttpPost]
         public async Task<IActionResult> Create(AdditionalGameViewModel model)
         {
+            // zjískání přihlášeného uživatele
             var user = await userManager.FindByNameAsync(model.ApplicationUserName);
 
+            // kontrola zdali byl uživatel zjískán
             if (user == null)
             {
                 ModelState.AddModelError("ApplicationUserName", "Chyba při zjískávání Id uživatele");
             }
 
+            // kontrola zdali je vyplněn alespoň jeden zaměstnaec
             if (!model.BarmaidId.HasValue && !model.InstructorId.HasValue)
             {
                 ModelState.AddModelError("BarmaidId", "Vyberte alespoň jednoho zaměstnance");
                 ModelState.AddModelError("InstructorId", "Vyberte alespoň jednoho zaměstnance");
             }
-            if ((model.BarmaidId == model.InstructorId) && (model.BarmaidId.HasValue || model.InstructorId.HasValue))
-            {
-                ModelState.AddModelError("BarmaidId", "Barmanka a intruktor nemohou být stejná osoba");
-                ModelState.AddModelError("InstructorId", "Barmanka a intruktor nemohou být stejná osoba");
-            }
 
+            // kontrola předaného modelu
             if (ModelState.IsValid)
             {
+                // vytvoření přemluvené hry podle předaného modelu
                 AdditionalGame newAdditionalGame = new AdditionalGame
                 {
                     Date = model.Date,
@@ -143,19 +142,24 @@ namespace BachelorProject.Controllers
                     BranchOffice = user.BranchOffice.Value,
                 };
 
+                // uložení záznamu do databáze
                 additionalGameRepostioty.Add(newAdditionalGame);
+                // návrat zpět na metodu index
                 return RedirectToAction("index");
             }
 
+            // pokud nebyly hodnoty modelu platné je navrácen formulář pro vytvoření přemluvené hry a jsou opět načteny hodnoty pro výběrová pole
             model.Barmaids = GetBarmaidsToSelectList(true);
             model.Employees = GetEmployeesToSelectList(true);
             model.GameTypes = GetGameTypesToSelectList(true);
             return View(model);
         }
 
+        // metoda pro zobrazení formuláře pro úpravu přemluvené hry
         [HttpGet]
         public IActionResult Edit(int id)
         {
+            // zjískání přemluvené hry z databáze
             AdditionalGame additionalGame = additionalGameRepostioty.GetAdditionalGame(id);
             AdditionalGameViewModel additionalGameEditModel = new AdditionalGameViewModel
             {
@@ -169,19 +173,22 @@ namespace BachelorProject.Controllers
                 Barmaids = GetBarmaidsToSelectList(false),
                 Employees = GetEmployeesToSelectList(false),
             };
-
+            // zobrazení formuláře
             return View(additionalGameEditModel);
         }
 
+        // metoda pro uložení upravené přemluvené hry po potvrzení formuláře
         [HttpPost]
         public IActionResult Edit(AdditionalGameViewModel model)
         {
+            // kontrol, zdali je vybrán alespoň jeden zaměstnanec
             if (!model.BarmaidId.HasValue && !model.InstructorId.HasValue)
             {
                 ModelState.AddModelError("BarmaidId", "Vyberte alespoň jednoho zaměstnance");
                 ModelState.AddModelError("InstructorId", "Vyberte alespoň jednoho zaměstnance");
             }
 
+            // kontrola předaného modelu
             if (ModelState.IsValid)
             {
                 AdditionalGame additionalGame = additionalGameRepostioty.GetAdditionalGame(model.Id);
@@ -191,6 +198,7 @@ namespace BachelorProject.Controllers
                 additionalGame.BarmaidId = model.BarmaidId;
                 additionalGame.InstructorId = model.InstructorId;
 
+                // uložení upravené přemluvené hry dodatabáze
                 additionalGameRepostioty.Update(additionalGame);
                 return RedirectToAction("index");
             }
@@ -201,19 +209,25 @@ namespace BachelorProject.Controllers
             return View(model);
         }
 
+        // metoda pro zobrazení výsledků přemluvených her za daný měsíc
         [HttpPost]
         public async Task<ViewResult> Summary(string selectedMonth)
         {
+            // zjištění, který uživatel je přihlášen pro filtrování přemluvených her podle pobočky
             var user = await userManager.FindByNameAsync(User.Identity.Name);
             DateTime month = DateTime.Parse(selectedMonth);
+            // získání všech zaměstnanců z databáze
             IEnumerable<Employee> employees = employeeRepository.GetAllEmployees();
+            // získání všech typů her z databáze
             IEnumerable<GameType> gameTypes = additionalGameRepostioty.GetAllGameTypes();
 
+            // inicializace modelu
             AdditionalGamesOverviewViewModel model = new AdditionalGamesOverviewViewModel();
 
             model.SelectedDate = month;
             model.GameTypes = gameTypes;
 
+            // uspořádání přemluvených her a výpočet provizí
             foreach (Employee employee in employees)
             {
                 model.EmployeeGames.Add(GetEmployeeGames(employee, month, gameTypes, user.BranchOffice.Value));
@@ -227,16 +241,19 @@ namespace BachelorProject.Controllers
             return View(model);
         }
 
+        // metoda pro exportování výsledků přemluvených her za daný měsíc ve formátu XSLX
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> ExportToExcel(DateTime selectedDate)
         {
             await Task.Yield();
 
+            // získání přihlášeného uživatele pro filtrování přemluveenéch her podle pobočky
             var user = await userManager.FindByNameAsync(User.Identity.Name);
             string branchOfficeName = user.BranchOffice.Value == BranchOfficeEnum.Branik ? "Braník" : "Holešovice";
 
-
+            // získání všech zaměstnanců z databáze
             IEnumerable<Employee> employees = employeeRepository.GetAllEmployees();
+            // získání všech typů her z databáze
             IEnumerable<GameType> gameTypes = additionalGameRepostioty.GetAllGameTypes();
 
             AdditionalGamesOverviewViewModel model = new AdditionalGamesOverviewViewModel();
@@ -244,6 +261,7 @@ namespace BachelorProject.Controllers
             model.SelectedDate = selectedDate;
             model.GameTypes = gameTypes;
 
+            // uspořádání přemluvených her a výpočet provizí
             foreach (Employee employee in employees)
             {
                 model.EmployeeGames.Add(GetEmployeeGames(employee, selectedDate, gameTypes, user.BranchOffice.Value));
@@ -252,11 +270,13 @@ namespace BachelorProject.Controllers
             var stream = new MemoryStream();
             string excelName = $"PremluveneHry-{branchOfficeName}-{DateTime.Now.ToString("yyyy-MM")}.xlsx";
 
-            //using (var package = new ExcelPackage(stream))
+            // vytvoření XL workbooku
             using (var workbook = new XLWorkbook())
             {
+                // přidání listu
                 var ws = workbook.Worksheets.Add("Přemluvené hry");
 
+                // počáteční hodnoty buněk pro zápis výsledků
                 int rowStart = 1;
                 char columnStart = 'C';
                 char columnEnd = 'C';
@@ -266,6 +286,7 @@ namespace BachelorProject.Controllers
                     columnEnd++;
                 }
 
+                // vyplnění a formátování názvů sloupců...
                 ws.Cells("A1").Value = "Zaměstnanci";
                 ws.Cells("B1").Value = "Celkové prémie";
                 ws.Range("A1:A2").Merge();
@@ -288,15 +309,16 @@ namespace BachelorProject.Controllers
                 ws.Cell(string.Format("{0}{1}", columnStart, rowStart)).Value = "Počty sólo přemluvených her";
                 ws.Range(string.Format("{0}{1}:{2}{3}", columnStart, rowStart, columnEnd, rowStart)).Merge();
 
-
                 columnStart = 'C';
                 rowStart++;
 
+                // výpis typů her pro společné přemluvené hry
                 foreach (var item in gameTypes)
                 {
                     ws.Cells(string.Format("{0}{1}", columnStart, rowStart)).Value = string.Format("{0}", item.Name);
                     columnStart++;
                 }
+                // výpis typů her pro sólo přemluvené hry
                 foreach (var item in gameTypes)
                 {
                     ws.Cells(string.Format("{0}{1}", columnStart, rowStart)).Value = string.Format("{0}", item.Name);
@@ -306,6 +328,7 @@ namespace BachelorProject.Controllers
                 columnEnd = 'A';
                 rowStart++;
 
+                // naplnění tabulky hodnotami provizí a počty přemluvených her sečtených podle typů her
                 foreach (var emp in model.EmployeeGames)
                 {
                     ws.Cells(string.Format("{0}{1}", columnStart, rowStart)).Value = string.Format("{0}", emp.Employee.Name);
@@ -315,12 +338,14 @@ namespace BachelorProject.Controllers
                     ws.Cell(string.Format("{0}{1}", columnStart, rowStart)).Style.NumberFormat.Format = "# ### kč";
                     columnStart++;
                     columnEnd++;
+                    // počty společných přemluvených her
                     foreach (var duoGame in emp.SummedDuoGames)
                     {
                         ws.Cells(string.Format("{0}{1}", columnStart, rowStart)).Value = duoGame.Count;
                         columnStart++;
                         columnEnd++;
                     }
+                    // počty sólo přemluvených her
                     foreach (var soloGame in emp.SummedSoloGames)
                     {
                         ws.Cells(string.Format("{0}{1}", columnStart, rowStart)).Value = soloGame.Count;
@@ -337,7 +362,7 @@ namespace BachelorProject.Controllers
                 //var rngCommision = ws.Range(string.Format("B3:B{0}", rowStart));
                 //rngCommision.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
-
+                // zarovnání hodnot v buňkách
                 ws.Columns(1,30).AdjustToContents();
                 ws.Columns(1,30).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
@@ -347,15 +372,17 @@ namespace BachelorProject.Controllers
                 workbook.SaveAs(stream);
             }
             stream.Position = 0;
-
+            // vrácení souboru užvateli
             return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
         }
 
+        // metoda pro přeuspořádání dat a výpočet provizí z přemluvených her pro jednotlivé zaměstnance
         private EmployeeGamesModel GetEmployeeGames(Employee employee, DateTime month, IEnumerable<GameType> gameTypes, BranchOfficeEnum branchOffice) {
             EmployeeGamesModel employeeGames = new EmployeeGamesModel();
             List<SimplifiedGame> simplifiedSoloGames = new List<SimplifiedGame>();
             List<SimplifiedGame> simplifiedDuoGames = new List<SimplifiedGame>();
 
+            // přemluvené hry v roli instruktor
             if (employee.Role == EmployeeRoleEnum.Instruktor)
             {
                 foreach (AdditionalGame game in employee.InstuctorAdditionalGames.Where(ig => ig.Date.Month == month.Month && ig.BranchOffice == branchOffice))
@@ -368,6 +395,7 @@ namespace BachelorProject.Controllers
                         simplifiedSoloGames.Add(simplifiedGame);
                 }
             }
+            // přemluvené hry v roli hlavní barmanka
             else if (employee.Role == EmployeeRoleEnum.Hlavni_barmanka)
             {
                 foreach (AdditionalGame game in employee.BarmaidAdditionalGames.Where(bg => bg.Date.Month == month.Month && bg.BranchOffice == branchOffice))
@@ -387,6 +415,7 @@ namespace BachelorProject.Controllers
             //Dictionary<int, int> soloGamesSummedByType = new Dictionary<int, int>();
             //Dictionary<int, int> duoGamesSummedByType = new Dictionary<int, int>();
 
+            // součet počtů přemluvených her podle typů her
             foreach (GameType gameType in gameTypes)
             {
                 int sumSolo = simplifiedSoloGames.Where(g => g.GameTypeId == gameType.Id).Sum(game => game.Count);
@@ -404,10 +433,12 @@ namespace BachelorProject.Controllers
                 }
             }
 
+            // výpočet provize ze "sólo" přemluvených her
             int totalSoloCommision = 0;
             summedSoloGames.ForEach(g => {
                 totalSoloCommision += g.Commision * g.Count;
             });
+            // výpořet provize ze "společných" přemluvených her
             int totalDuoCommision = 0;
             summedDuoGames.ForEach(g => {
                 totalDuoCommision += g.Commision * g.Count;
@@ -420,6 +451,8 @@ namespace BachelorProject.Controllers
 
             return employeeGames;
         }
+
+        // metody pro naplnění výběrových oken při vytváření/úpravě přemluvených her
 
         private List<SelectListItem> GetBarmaidsToSelectList(bool onlyValid)
         {

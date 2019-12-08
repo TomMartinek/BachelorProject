@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Models
 {
+    /** 
+     * Databázová entita "Zaměstnanci"
+     * Každý atribut má jistá omezení, která jsou využívána při validaci jenak na straně prohlížeče, tak i na straně serveru
+     * **/
+
     public class Employee
     {
         public int Id { get; set; }

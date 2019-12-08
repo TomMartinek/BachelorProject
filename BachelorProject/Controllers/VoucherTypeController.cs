@@ -1,117 +1,125 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BachelorProject.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Threading.Tasks;
+//using BachelorProject.Models;
+//using Microsoft.AspNetCore.Authorization;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.EntityFrameworkCore;
 
-namespace BachelorProject.Controllers
-{
-    [Authorize(Roles = "admin")]
-    public class VoucherTypeController : Controller
-    {
-        private readonly IVoucherTypeRepository voucherTypeRepository;
+//namespace BachelorProject.Controllers
+//{
 
-        public VoucherTypeController(IVoucherTypeRepository voucherTypeRepository)
-        {
-            this.voucherTypeRepository = voucherTypeRepository;
-        }
+//    /** 
+//        Tento konroler obsahuje logiku spojenou s administrací typů voucherů.
+//        Všechny metody této třídy jsou přístupny pouze užavateli s rolí "admin".
 
-        [HttpGet]
-        public ViewResult Index(string deleteMessage)
-        {
-            ViewBag.DeleteMessage = deleteMessage;
-            var model = voucherTypeRepository.GetAllVoucherTypes().OrderByDescending(vt => vt.IsValid);
+//        TENTO KONTROLER ZATÍM NENÍ VYUŽÍVÁN. JE ZDE Z DŮVODU BUDOUCÍHO VÝVOJE SPOJENÉHO S VOUCHERY
+//    */
 
-            return View(model);
-        }
+//    [Authorize(Roles = "admin")]
+//    public class VoucherTypeController : Controller
+//    {
+//        private readonly IVoucherTypeRepository voucherTypeRepository;
 
-        [HttpPost]
-        public IActionResult DeleteVoucherType(int id)
-        {
-            string deleteMessage = null;
+//        public VoucherTypeController(IVoucherTypeRepository voucherTypeRepository)
+//        {
+//            this.voucherTypeRepository = voucherTypeRepository;
+//        }
 
-            try
-            {
-                VoucherType voucherType = voucherTypeRepository.Delete(id);
-                deleteMessage = "Typ voucheru úspěšně smazán";
-                return RedirectToAction("index", new { DeleteMessage = deleteMessage });
-            }
-            catch (DbUpdateException)
-            {
-                try
-                {
-                    VoucherType voucherType = voucherTypeRepository.GetVoucherType(id);
-                    voucherType.IsValid = false;
-                    voucherTypeRepository.Update(voucherType);
+//        [HttpGet]
+//        public ViewResult Index(string deleteMessage)
+//        {
+//            ViewBag.DeleteMessage = deleteMessage;
+//            var model = voucherTypeRepository.GetAllVoucherTypes().OrderByDescending(vt => vt.IsValid);
 
-                    deleteMessage = "Typ voucheru memůže být smazán protože je využíván. " +
-                                    "Typ voucheru nelze od teď využívat při vytváření nových voucherů. " +
-                                    "Pokud chcete tento typ voucheru smazat, odstraňte vouchery s tímto typem a zkuste to znovu.";
+//            return View(model);
+//        }
 
-                    return RedirectToAction("index", new { DeleteMessage = deleteMessage });
-                }
-                catch (DbUpdateException)
-                {
-                    deleteMessage = "Typ voucheru se nepodařilo smazat";
-                    return RedirectToAction("index", new { DeleteMessage = deleteMessage });
-                }
-            }
-        }
+//        [HttpPost]
+//        public IActionResult DeleteVoucherType(int id)
+//        {
+//            string deleteMessage = null;
 
-        [HttpGet]
-        public ViewResult Create()
-        {
-            return View();
-        }
+//            try
+//            {
+//                VoucherType voucherType = voucherTypeRepository.Delete(id);
+//                deleteMessage = "Typ voucheru úspěšně smazán";
+//                return RedirectToAction("index", new { DeleteMessage = deleteMessage });
+//            }
+//            catch (DbUpdateException)
+//            {
+//                try
+//                {
+//                    VoucherType voucherType = voucherTypeRepository.GetVoucherType(id);
+//                    voucherType.IsValid = false;
+//                    voucherTypeRepository.Update(voucherType);
 
-        [HttpPost]
-        public IActionResult Create(VoucherType model)
-        {
-            if (ModelState.IsValid)
-            {
-                VoucherType newVoucherType = new VoucherType
-                {
-                    Name = model.Name,
-                    IsValid = true,
-                };
+//                    deleteMessage = "Typ voucheru memůže být smazán protože je využíván. " +
+//                                    "Typ voucheru nelze od teď využívat při vytváření nových voucherů. " +
+//                                    "Pokud chcete tento typ voucheru smazat, odstraňte vouchery s tímto typem a zkuste to znovu.";
 
-                voucherTypeRepository.Add(newVoucherType);
-                return RedirectToAction("index");
-            }
+//                    return RedirectToAction("index", new { DeleteMessage = deleteMessage });
+//                }
+//                catch (DbUpdateException)
+//                {
+//                    deleteMessage = "Typ voucheru se nepodařilo smazat";
+//                    return RedirectToAction("index", new { DeleteMessage = deleteMessage });
+//                }
+//            }
+//        }
 
-            return View();
-        }
+//        [HttpGet]
+//        public ViewResult Create()
+//        {
+//            return View();
+//        }
 
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            VoucherType voucherType = voucherTypeRepository.GetVoucherType(id);
-            VoucherType voucherTypeEditModel = new VoucherType
-            {
-                Id = voucherType.Id,
-                Name = voucherType.Name,
-                IsValid = voucherType.IsValid
-            };
-            return View(voucherTypeEditModel);
-        }
+//        [HttpPost]
+//        public IActionResult Create(VoucherType model)
+//        {
+//            if (ModelState.IsValid)
+//            {
+//                VoucherType newVoucherType = new VoucherType
+//                {
+//                    Name = model.Name,
+//                    IsValid = true,
+//                };
 
-        [HttpPost]
-        public IActionResult Edit(VoucherType model)
-        {
-            if (ModelState.IsValid)
-            {
-                VoucherType voucherType = voucherTypeRepository.GetVoucherType(model.Id);
-                voucherType.Name = model.Name;
-                voucherType.IsValid = model.IsValid;
+//                voucherTypeRepository.Add(newVoucherType);
+//                return RedirectToAction("index");
+//            }
 
-                voucherTypeRepository.Update(voucherType);
-                return RedirectToAction("index");
-            }
+//            return View();
+//        }
 
-            return View();
-        }
-    }
-}
+//        [HttpGet]
+//        public IActionResult Edit(int id)
+//        {
+//            VoucherType voucherType = voucherTypeRepository.GetVoucherType(id);
+//            VoucherType voucherTypeEditModel = new VoucherType
+//            {
+//                Id = voucherType.Id,
+//                Name = voucherType.Name,
+//                IsValid = voucherType.IsValid
+//            };
+//            return View(voucherTypeEditModel);
+//        }
+
+//        [HttpPost]
+//        public IActionResult Edit(VoucherType model)
+//        {
+//            if (ModelState.IsValid)
+//            {
+//                VoucherType voucherType = voucherTypeRepository.GetVoucherType(model.Id);
+//                voucherType.Name = model.Name;
+//                voucherType.IsValid = model.IsValid;
+
+//                voucherTypeRepository.Update(voucherType);
+//                return RedirectToAction("index");
+//            }
+
+//            return View();
+//        }
+//    }
+//}

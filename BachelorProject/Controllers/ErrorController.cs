@@ -11,16 +11,21 @@ using Microsoft.Extensions.Logging;
 
 namespace BachelorProject.Controllers
 {
+    /** 
+        Tento konroler obsahuje logiku spojenou s chybami vzniklími při práci s aplikací.
+    */
+
     public class ErrorController : Controller
     {
         private readonly ILogger<ErrorController> logger;
 
+        // konstruktor této třídy
         public ErrorController(ILogger<ErrorController> logger)
         {
             this.logger = logger;
         }
 
-        // GET: /<controller>/
+        // metoda pro zpracování http požadavku s kódem 404
         [Route("Error/{statusCode}")]
         public IActionResult HttpStatusCodeHandler(int statusCode)
         {
@@ -38,6 +43,7 @@ namespace BachelorProject.Controllers
             return View("NotFound");
         }
 
+        // metoda pro zpracování a zalogování chyby
         [Route("Error")]
         [AllowAnonymous]
         public IActionResult Error()

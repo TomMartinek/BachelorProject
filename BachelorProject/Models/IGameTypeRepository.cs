@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Models
 {
+    // rozhraní pro práci s entitou "Typy her"
     public interface IGameTypeRepository
     {
         GameType GetGameType(int id);

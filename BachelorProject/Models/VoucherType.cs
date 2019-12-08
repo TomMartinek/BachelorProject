@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Models
 {
+    // TATO ENTITA ZATÍM NENÍ V APLIKACI NIKDE VYUŽÍVÁNA, JE ZDE PRO ÚČELY BUDOUCÍHO VÝVOJE
     public class VoucherType
     {
         public int Id { get; set; }

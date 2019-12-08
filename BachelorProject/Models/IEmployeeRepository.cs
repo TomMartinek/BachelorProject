@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Models
 {
+    // rozhraní pro práci s entitou "Zaměstnaci"
     public interface IEmployeeRepository
     {
         Employee GetEmployee(int id);

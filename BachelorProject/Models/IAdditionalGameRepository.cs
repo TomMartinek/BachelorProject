@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Models
 {
+    // rozhraní pro práci s entitou "Přemluvené hry"
     public interface IAdditionalGameRepository
     {
         AdditionalGame GetAdditionalGame(int id);

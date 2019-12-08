@@ -14,6 +14,11 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Controllers
 {
+    /** 
+        Tento konroler obsahuje logiku spojenou s administrací zaměstnanců.
+        Všechny metody této třídy jsou přístupny pouze užavateli s rolí "admin".
+    */
+
     [Authorize(Roles = "admin")]
     public class EmployeeController : Controller
     {
@@ -21,6 +26,7 @@ namespace BachelorProject.Controllers
         private readonly IHostingEnvironment hostingEnviroment;
         private readonly ILogger logger;
 
+        // konstruktor této třídy
         public EmployeeController(IEmployeeRepository employeeRepository,
                                   IHostingEnvironment hostingEnviroment,
                                   ILogger<EmployeeController> logger)
@@ -30,35 +36,43 @@ namespace BachelorProject.Controllers
             this.logger = logger;
         }
 
+        // metoda pro zobrazení všech zaměstnanců uložených v DB
         [HttpGet]
         public ViewResult Index(string deleteMessage)
         {
             ViewBag.DeleteMessage = deleteMessage;
 
+            // získání všech zaměstnanců z DB a jejich seřazení podle patnosti
             var model = _employeeRepository.GetAllEmployees().OrderByDescending(e => e.IsValid);
 
             return View("~/Views/Employee/index.cshtml", model);
         }
 
+        // metoda pro odstranění zaměstnance z DB
         [HttpPost]
         public IActionResult DeleteEmployee(int id)
         {
             string deleteMessage = null;
 
+            // pokus o dostranění zaměstnance
             try
             {
+                // odstranění zaměstnance
                 Employee employee = _employeeRepository.Delete(id);
                 deleteMessage = "Zaměstnanec byl úspěšně smazán";
                 return RedirectToAction("index", new { DeleteMessage = deleteMessage });
             }
+            // v případě že existují přemluvené hry s tímto zaměstnancem není možné zaměstnance z DB vymazat
             catch (DbUpdateException)
             {
+                // označení zaměstnance za neplatného - nebude tedy zobrazován při vytváření přemluvených her
                 try
                 {
                     Employee employee = _employeeRepository.GetEmployee(id);
                     employee.IsValid = false;
                     _employeeRepository.Update(employee);
 
+                    // zobrazení hlášky o tom, že uživatel nemohl být smazán, ale byl skryt
                     deleteMessage = "Zaměstnanec memůže být smazán protože je využíván. " +
                                     "Zaměstnance nelze od teď využívat při vytváření nových přemluvených her. " +
                                     "Pokud chcete tohoto zaměstnance smazat, odstraňte přemluvené hry s tímto zaměstnancem a zkuste to znovu.";
@@ -67,24 +81,18 @@ namespace BachelorProject.Controllers
                 }
                 catch (Exception)
                 {
-
+                    // odchycení neočekávané chyby
                     deleteMessage = "Zaměstnance se nepodařilo smazat";
                     return RedirectToAction("index", new { DeleteMessage = deleteMessage });
                 }
             }
         }
 
+        // metoda pro zobrazení detailu zaměstnance - tato metoda zatím není využívána
         [HttpGet]
         public ViewResult Details(int? id)
         {
-            //throw new Exception("error in details view");
-            //logger.LogTrace("Trace Log");
-            //logger.LogDebug("Debug Log");
-            //logger.LogInformation("Information Log");
-            //logger.LogWarning("Warning Log");
-            //logger.LogError("Error Log");
-            //logger.LogCritical("Critical Log");
-
+            // získání zaměstnance z DB
             Employee employee = _employeeRepository.GetEmployee(id.Value);
 
             if (employee == null)
@@ -102,15 +110,18 @@ namespace BachelorProject.Controllers
             return View(employeeDetailsViewModel);
         }
 
+        // metoda pro zobrazení formuláře k vytvoření zaměstnance
         [HttpGet]
         public ViewResult Create()
         {
             return View();
         }
 
+        // metoda pro vytvoření zaměstnace
         [HttpPost]
         public IActionResult Create(EmployeeCreateViewModel model)
         {
+            // konrola modelu
             if (ModelState.IsValid)
             {
                 //string uniqueFileName = ProcessUploadedFile(model);
@@ -124,6 +135,7 @@ namespace BachelorProject.Controllers
                     IsValid = true
                 };
 
+                // uložení zaměstnance do databáze
                 _employeeRepository.Add(newEmployee);
                 return RedirectToAction("index");
             }
@@ -131,9 +143,11 @@ namespace BachelorProject.Controllers
             return View(model);
         }
 
+        // metoda pro zobrazení formuláře k úpravě zaměstnance
         [HttpGet]
         public IActionResult Edit(int id)
         {
+            // získání zaměstnance z DB
             Employee employee = _employeeRepository.GetEmployee(id);
 
             EmployeeEditViewModel employeeEditViewModel = new EmployeeEditViewModel
@@ -148,9 +162,11 @@ namespace BachelorProject.Controllers
             return View(employeeEditViewModel);
         }
 
+        // metoda pro uložení upraveného zaměstnance
         [HttpPost]
         public IActionResult Edit(EmployeeEditViewModel model)
         {
+            // kontrola modelu
             if (ModelState.IsValid)
             {
                 Employee employee = _employeeRepository.GetEmployee(model.Id);
@@ -159,18 +175,19 @@ namespace BachelorProject.Controllers
                 employee.Role = model.Role;
                 employee.IsValid = model.IsValid;
 
-                if (model.Photo != null)
-                {
-                    if (model.ExistingPhotoPath != null)
-                    {
-                        string photoPath = Path.Combine(hostingEnviroment.WebRootPath,
-                            "images", model.ExistingPhotoPath);
-                        System.IO.File.Delete(photoPath);
-                    }
+                //if (model.Photo != null)
+                //{
+                //    if (model.ExistingPhotoPath != null)
+                //    {
+                //        string photoPath = Path.Combine(hostingEnviroment.WebRootPath,
+                //            "images", model.ExistingPhotoPath);
+                //        System.IO.File.Delete(photoPath);
+                //    }
                     
-                    //employee.PhotoPath = ProcessUploadedFile(model);
-                }
+                //    //employee.PhotoPath = ProcessUploadedFile(model);
+                //}
 
+                // uložení upraveného záznamu do DB
                 _employeeRepository.Update(employee);
                 return RedirectToAction("index");
             }

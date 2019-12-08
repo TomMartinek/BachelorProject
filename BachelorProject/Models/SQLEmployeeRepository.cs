@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace BachelorProject.Models
 {
+    // implementace rozhraní IEmployeeRepository
     public class SQLEmployeeRepository : IEmployeeRepository
     {
         private readonly AppDbContext context;
